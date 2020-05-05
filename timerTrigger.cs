@@ -28,31 +28,8 @@ namespace EmployeeFunction
 {
     public static class timerTrigger
     {
-        //[FunctionName("timerTrigger")]
-        //public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
-        //{
-        //    log.LogInformation($" Timer trigger function executed at: {DateTime.Now}");
 
-        //    var req = new HttpRequestMessage();
-        //    var employeeEntity = new EmployeeEntity()
-        //    { employeeName = "Venky", employeeSalary = "9000", location = "Delhi", address = "H-3", date = DateTime.Now };
-        //    req.Content = new StringContent(JsonConvert.SerializeObject(employeeEntity));
-        //    req = TestHelpers.SetupHttp(req);
-
-        //    log.LogInformation($" triggered successfully at: {DateTime.Now}");
-
-        //    Employee.UpdateEmployee(req, DocumentClient client, ILogger log, string id, string location));
-        //}
-
-        //public static async Task<IActionResult> UpdateEmployee(
-        //   [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "{location}/UpdateEmployee/{id}")]HttpRequest req,
-        //    [CosmosDB(ConnectionStringSetting = "CosmosDBConnection")]
-        //    DocumentClient client,
-        //      ILogger log, string id, string location)
-
-
-
-        [FunctionName("TimerTrigger")]
+  [FunctionName("TimerTrigger")]
         public static void Run(
             [TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
               // [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "{location}/UpdateEmployee/{id}")]
@@ -61,12 +38,10 @@ namespace EmployeeFunction
             //[TwilioSms(AccountSidSetting = "TwilioAccountSid", AuthTokenSetting = "TwilioAuthToken", From = "%TwilioFromNumber%")]
             out CreateMessageOptions messageToSend,
           ILogger log)
-
         {
             try
             {
-
-                //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+      //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                // var updated = JsonConvert.DeserializeObject<EmployeeEntity>(requestBody);
                 Uri collectionUri = UriFactory.CreateDocumentCollectionUri("Employee", "Employee");
                 var options = new FeedOptions { EnableCrossPartitionQuery = true };
@@ -77,10 +52,7 @@ namespace EmployeeFunction
                     client.CreateDocumentQuery<order>(collectionUri, options)
                           .Where(order => order.orderDate >= startOfToday && order.orderDate <= endOfToday)
                           .Sum(order => order.orderTotal);
-               // var document = client.CreateDocumentQuery(collectionUri, GetFeedOptions(location)).Where(t => t.Id == id)
-               //.AsEnumerable().FirstOrDefault();
-
-
+               
                 var messageText = $"Total sales for today: {totalValueOfTodaysOrders}";
 
                 log.LogInformation(messageText);
