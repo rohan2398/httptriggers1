@@ -29,20 +29,18 @@ namespace EmployeeFunction
     public static class timerTrigger
     {
 
-  [FunctionName("TimerTrigger")]
+        [FunctionName("TimerTrigger")]
         public static void Run(
-            [TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
-              // [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "{location}/UpdateEmployee/{id}")]
-              HttpRequest req,
-            [CosmosDB(ConnectionStringSetting = "CosmosDBConnection")] DocumentClient client,
-            //[TwilioSms(AccountSidSetting = "TwilioAccountSid", AuthTokenSetting = "TwilioAuthToken", From = "%TwilioFromNumber%")]
-            out CreateMessageOptions messageToSend,
-          ILogger log)
+                  [TimerTrigger("*/15 * * * * *")]TimerInfo myTimer,
+   [CosmosDB(databaseName: "Employee", collectionName: "Employee", ConnectionStringSetting = "CosmosDBConnection")] DocumentClient client,
+     //[TwilioSms(AccountSidSetting = "TwilioAccountSid", AuthTokenSetting = "TwilioAuthToken", From = "%TwilioFromNumber%")]
+        //  out CreateMessageOptions messageToSend,
+        ILogger log)
         {
             try
             {
-      //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-               // var updated = JsonConvert.DeserializeObject<EmployeeEntity>(requestBody);
+                //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                // var updated = JsonConvert.DeserializeObject<EmployeeEntity>(requestBody);
                 Uri collectionUri = UriFactory.CreateDocumentCollectionUri("Employee", "Employee");
                 var options = new FeedOptions { EnableCrossPartitionQuery = true };
                 DateTime startOfToday = DateTime.Today;
@@ -52,27 +50,26 @@ namespace EmployeeFunction
                     client.CreateDocumentQuery<order>(collectionUri, options)
                           .Where(order => order.orderDate >= startOfToday && order.orderDate <= endOfToday)
                           .Sum(order => order.orderTotal);
-               
+
                 var messageText = $"Total sales for today: {totalValueOfTodaysOrders}";
 
                 log.LogInformation(messageText);
 
-                var managersMobileNumber = new PhoneNumber(Environment.GetEnvironmentVariable("ManagersMobileNumber"));
+                //var managersMobileNumber = new PhoneNumber(Environment.GetEnvironmentVariable("ManagersMobileNumber"));
 
-                var mobileMessage = new CreateMessageOptions(managersMobileNumber)
+                var mobileMessage = new CreateMessageOptions(Environment.GetEnvironmentVariable("ManagersMobileNumber"))
                 {
                     Body = messageText
                 };
 
-                messageToSend = mobileMessage;
+                //messageToSend = mobileMessage;
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                messageToSend = null;
+                //messageToSend = null;
             }
         }
     }
- 
-}
 
+}
