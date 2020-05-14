@@ -10,7 +10,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace Company.Function
 {
-    public static class CosmosDBTriggerCSharp1
+    public static class CosmosDBTrigger
     {
         private static readonly string _endpointUrl = System.Environment.GetEnvironmentVariable("endpointUrl");
         private static readonly string _primaryKey = System.Environment.GetEnvironmentVariable("primaryKey");
@@ -19,7 +19,7 @@ namespace Company.Function
         private static CosmosClient cosmosClient = new CosmosClient(_endpointUrl, _primaryKey);
 
 
-        [FunctionName("CosmosDBTriggerCSharp1")]
+        [FunctionName("CosmosDBTrigger")]
         public static async Task Run([CosmosDBTrigger(
             databaseName: "database",
             collectionName: "collection1",
