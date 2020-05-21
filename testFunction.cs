@@ -27,7 +27,7 @@ using System.Threading;
 
 namespace FunctionApp2.TESTING
 {
-   public class testFunction
+    public class testFunction
     {
         private Mock<ILogger> loggerMock;
 
@@ -37,7 +37,7 @@ namespace FunctionApp2.TESTING
             this.loggerMock = new Mock<ILogger>();
         }
 
-            [Fact]
+        [Fact]
         public void CreateEmployeeList()
         {
             this.TestSetup();
@@ -63,16 +63,16 @@ namespace FunctionApp2.TESTING
 
             var mockOrderDocumentQuery = TestHelpers.GetMockDocumentQuery(dataSource, response);
 
-            var priceClient = new Mock<IDocumentClient>();
-            priceClient
+            var createemployeeClient = new Mock<IDocumentClient>();
+            createemployeeClient
             .Setup(_ => _.CreateDocumentQuery<EmployeeEntity>(It.IsAny<Uri>(), It.IsAny<FeedOptions>()))
             .Returns(mockOrderDocumentQuery.Object);
 
-            priceClient
+            createemployeeClient
            .Setup(_ => _.ReplaceDocumentAsync(It.IsAny<Document>(), It.IsAny<RequestOptions>(), It.IsAny<CancellationToken>()))
            .Returns(Task.FromResult(new ResourceResponse<Document>()));
 
-            var result = Employee.UpdateVisibility(req, this.loggerMock.Object, priceClient.Object);
+            var result = Employee.UpdateEmployee(req, createemployeeClient.Object, loggerMock.Object, "id", "location");
 
             var okresult = result.Result as Microsoft.AspNetCore.Mvc.OkObjectResult;
             string message = ((dynamic)okresult.Value).message as string;
@@ -84,5 +84,46 @@ namespace FunctionApp2.TESTING
 
         }
 
+        [Fact]
+        public void DeleteEmployeeList()
+        {
+            this.TestSetup();
+
+            EmployeeEntity input = new EmployeeEntity();
+            input.employeeId = "TestEmployeeId";
+            input.location = "TestEmployeeLocation";
+
+            var req = new HttpRequestMessage();
+            req.Content = new StringContent(JsonConvert.SerializeObject(input), Encoding.UTF8, "application/json");
+            req = TestHelpers.SetupHttp(req);
+
+
+            Expression<Func<EmployeeEntity, bool>> predicate = t => t.employeeId == "TestEmployeeId";
+            var dataSource = new List<EmployeeEntity> { }.AsQueryable();
+            var expected = dataSource.Where(predicate);
+            var response = new FeedResponse<EmployeeEntity>(expected);
+
+            var mockOrderDocumentQuery = TestHelpers.GetMockDocumentQuery(dataSource, response);
+            var deleteemployeeClient = new Mock<IDocumentClient>();
+            deleteemployeeClient
+            .Setup(_ => _.CreateDocumentQuery<EmployeeEntity>(It.IsAny<Uri>(), It.IsAny<FeedOptions>()))
+            .Returns(mockOrderDocumentQuery.Object);
+
+            deleteemployeeClient
+           .Setup(_ => _.ReplaceDocumentAsync(It.IsAny<Document>(), It.IsAny<RequestOptions>(), It.IsAny<CancellationToken>()))
+           .Returns(Task.FromResult(new ResourceResponse<Document>()));
+
+            var result = Employee.UpdateEmployee(req, deleteemployeeClient.Object, loggerMock.Object, "id", "location");
+
+            var okresult = result.Result as Microsoft.AspNetCore.Mvc.OkObjectResult;
+            string message = ((dynamic)okresult.Value).message as string;
+
+            Assert.Equal(okresult.StatusCode, StatusCodes.Status200OK);
+            Assert.Equal("Favourites Added Successfully!", message);
+
+
+
+        }
     }
 }
+ 
