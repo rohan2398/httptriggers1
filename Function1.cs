@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System;
 
 namespace Company
 {
@@ -49,8 +50,18 @@ namespace Company
         public static IActionResult GetBookmark(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
            [CosmosDB("Bookmarks", "Bookmarks", ConnectionStringSetting = "CosmosDB", Id = "id", PartitionKey = "{Query.id}")]Bookmark bookmark, ILogger log)
+         
         {
-            return (ActionResult)new OkObjectResult(bookmark);
+            try
+            {
+
+                return (ActionResult)new OkObjectResult(bookmark);
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
