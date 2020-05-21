@@ -123,6 +123,45 @@ namespace FunctionApp2.TESTING
 
 
 
+            [Fact]
+        public void UpdateEmployeeList()
+        {
+            this.TestSetup();
+
+            EmployeeEntity input = new EmployeeEntity();
+            input.employeeId = "TestEmployeeId";
+            input.location = "TestEmployeeLocation";
+
+            var req = new HttpRequestMessage();
+            req.Content = new StringContent(JsonConvert.SerializeObject(input), Encoding.UTF8, "application/json");
+            req = TestHelpers.SetupHttp(req);
+
+
+            Expression<Func<EmployeeEntity, bool>> predicate = t => t.employeeId == "TestEmployeeId";
+            var dataSource = new List<EmployeeEntity> { }.AsQueryable();
+            var expected = dataSource.Where(predicate);
+            var response = new FeedResponse<EmployeeEntity>(expected);
+
+            var mockOrderDocumentQuery = TestHelpers.GetMockDocumentQuery(dataSource, response);
+            var updateemployeeClient = new Mock<IDocumentClient>();
+            updateemployeeClient
+            .Setup(_ => _.CreateDocumentQuery<EmployeeEntity>(It.IsAny<Uri>(), It.IsAny<FeedOptions>()))
+            .Returns(mockOrderDocumentQuery.Object);
+
+            updateemployeeClient
+           .Setup(_ => _.ReplaceDocumentAsync(It.IsAny<Document>(), It.IsAny<RequestOptions>(), It.IsAny<CancellationToken>()))
+           .Returns(Task.FromResult(new ResourceResponse<Document>()));
+
+            var result = Employee.UpdateEmployee(req, updateemployeeClient.Object, loggerMock.Object, "id", "location");
+
+            var okresult = result.Result as Microsoft.AspNetCore.Mvc.OkObjectResult;
+            string message = ((dynamic)okresult.Value).message as string;
+
+            Assert.Equal(okresult.StatusCode, StatusCodes.Status200OK);
+            Assert.Equal("Favourites Added Successfully!", message);
+
+
+
         }
     }
 }
