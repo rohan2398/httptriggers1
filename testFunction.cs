@@ -113,13 +113,14 @@ namespace FunctionApp2.TESTING
            .Setup(_ => _.ReplaceDocumentAsync(It.IsAny<Document>(), It.IsAny<RequestOptions>(), It.IsAny<CancellationToken>()))
            .Returns(Task.FromResult(new ResourceResponse<Document>()));
 
-            var result = Employee.UpdateEmployee(req, deleteemployeeClient.Object, loggerMock.Object, "id", "location");
+            var result = Employee.DeleteEmployee(req, deleteemployeeClient.Object, loggerMock.Object, "id", "location");
 
             var okresult = result.Result as Microsoft.AspNetCore.Mvc.OkObjectResult;
             string message = ((dynamic)okresult.Value).message as string;
 
             Assert.Equal(okresult.StatusCode, StatusCodes.Status200OK);
             Assert.Equal("Favourites Added Successfully!", message);
+        }
 
 
 
