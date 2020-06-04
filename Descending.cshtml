@@ -1,0 +1,62 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IEnumerable<Localdatabase.Models.Empmodel>
+
+<p>
+    @Html.ActionLink("Add New Employee", "AddEmployee")
+</p>
+
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Empid)
+        </th>
+
+        <th>
+            @Html.ActionLink("Name", "Ascending")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Branch)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mobilenumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Zip)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Empid)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Branch)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mobilenumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Zip)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditEmpDetails", new { id = item.Empid }) |
+                @Html.ActionLink("Delete", "DeleteEmp", new { id = item.Empid })
+            </td>
+        </tr>
+
+
+
+    }
+
+</table>

@@ -1,0 +1,66 @@
+﻿@model Localdatabase.Models.Empmodel
+
+@{
+    ViewBag.Title = "Delemp";
+}
+
+<h2>Delemp</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Empmodel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Empid)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Empid)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Branch)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Branch)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Mobilenumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Mobilenumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Zip)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Zip)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" onclick="DeleteEmp" class="btn btn-default" /> 
+            @Html.ActionLink("Back to List","Getallempdetails")
+        </div>
+
+
+    }
+</div>
